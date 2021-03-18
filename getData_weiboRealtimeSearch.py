@@ -4,10 +4,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
-from snownlp import SnowNLP
-from bs4 import BeautifulSoup
-from time import gmtime, strftime
 
+from time import gmtime, strftime
+import csv
 
 
 opts = Options()
@@ -24,33 +23,10 @@ with webdriver.Chrome(options = opts) as driver:
     feeds = driver.find_elements_by_xpath('//td[@class="td-02"]/a')
     topics_list = []
     links_list = []
-    for p in range(len(feeds)):
-        topics_list.append(feeds[p].text);
-        links_list.append(feeds[p].get_attribute('href'))
-    for p in range(len(feeds)):
-
-        f = open("./export_data/" + strftime("%d_%b_%Y_%H_%M", gmtime()) + "_" + str(p) + "_" +topics_list[p] + ".txt", 'a')
-        f.write("url: "+ links_list[p])
-        feeds_whiteboard = ""
-        try:
-            driver.get(links_list[p])
-            userIDs = driver.find_elements_by_xpath('//div[@class="card-feed"]/div[@class="content"]/div[@class="info"]/div[2]/a[@class="name"]')#'/div[1]/a[@class="name"]')
-            feeds_content = driver.find_elements_by_xpath('//div[@class="card-feed"]/div[@class="content"]/p[@class="txt"]')
-                #print(len(userIDs))
-
-            for h in range(len(userIDs)):
-                f.write("userID:"+ userIDs[h].text + "; \t" + userIDs[h].get_attribute('href') + "\n")
-                f.write("feed:" + feeds_content[h].text + "\n")
-                feeds_whiteboard += feeds_content[h].text + "\n\n\n"
-
-
-        except Exception as e:
-            print("[error]: path is not available: " + links_list[p])
-        if feeds_whiteboard:
-            s = SnowNLP(feeds_whiteboard)
-            print(*s.keywords(5))
-
-        #driver.switch_to.window(driver.window_handles[0])
-        #WebDriverWait(driver, 5)
-        #driver.execute_script("window.history.go(-1)")
-        f.close()
+    with open('./export_data/data_' + strftime("%H_%M_%d_%b_%Y", gmtime()) + '.csv', 'w', newline='') as myfile:
+        wr = csv.writer(myfile, delimiter=' ', escapechar=' ',quoting=csv.QUOTE_NONE)
+        for p in range(len(feeds)):
+            topics_list.append(feeds[p].text);
+            #wr.writerow(topics_list[p])
+            links_list.append(feeds[p].get_attribute('href'))
+            wr.writerow([topics_list[p], links_list[p]])
