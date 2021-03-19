@@ -26,7 +26,7 @@ def readCSV(strFileName):
         listData = list(csvDataRaw)
     return listData
 
-csvFilesList = findCSVs('./export_data')
+csvFilesList = findCSVs('./raw_data')
 for f in range(len(csvFilesList)):
     data = (readCSV(csvFilesList[f]))
 opts = Options()
@@ -41,20 +41,15 @@ with webdriver.Chrome(options = opts) as driver:
             userIDs = driver.find_elements_by_xpath('//div[@class="card-feed"]/div[@class="content"]/div[@class="info"]/div[2]/a[@class="name"]')#'/div[1]/a[@class="name"]')
             feeds_content = driver.find_elements_by_xpath('//div[@class="card-feed"]/div[@class="content"]/p[@class="txt"]')
 #                #print(len(userIDs))
-            FeedID_Weibo = "_"
+            g = open("./export_data/" + strftime("%d_%b_%Y_%H_%M", gmtime()) + "_" + str(p) + "_topic_" +data[p][0] + ".csv", 'a')
             for h in range(len(userIDs)):
                 f.write("userID:"+ userIDs[h].text + "; \t" + userIDs[h].get_attribute('href') + "\n")
                 f.write("feed:" + feeds_content[h].text + "\n")
                 feeds_whiteboard += feeds_content[h].text + "\n\n\n"
                 # https://weibo.com/2110705772?refer_flag=1001030103_
                 UserID_Weibo = re.findall(r'https://weibo.com/(.+)?\?refer_flag=',userIDs[h].get_attribute('href'))[0]
-                tmp = re.findall(r'\?refer_flag=(.+)?_',userIDs[h].get_attribute('href'))[0]
-                if("_" != FeedID_Weibo && tmp == FeedID_Weibo):
-                    # not the first user comment, just add data to list
-                if("_" != FeedID_Weibo && tmp != FeedID_Weibo):
-                    # something goes wrong, there is different feedid been found!
-                if("_" == FeedID_Weibo)
-                    FeedID_Weibo = tmp
+                g.write(UserID_Weibo + ',\t' + userIDs[h].text + '\n')
+            g.close()
                 #FeedTrackData = open("./export_data/" + strftime("%d_%b_%Y_%H_%M", gmtime()) + "_" + str(p) + "_" +data[p][0] + ".txt", 'a')
         except Exception as e:
             print("[error]: path is not available: " + str(e))

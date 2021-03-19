@@ -23,7 +23,7 @@ with webdriver.Chrome(options = opts) as driver:
     feeds = driver.find_elements_by_xpath('//td[@class="td-02"]/a')
     topics_list = []
     links_list = []
-    with open('./export_data/data_' + strftime("%H_%M_%d_%b_%Y", gmtime()) + '.csv', 'w', newline='') as myfile:
+    with open('./raw_data/data_' + strftime("%H_%M_%d_%b_%Y", gmtime()) + '.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile, delimiter=' ', escapechar=' ',quoting=csv.QUOTE_NONE)
         for p in range(len(feeds)):
             topics_list.append(feeds[p].text);
